@@ -32,4 +32,11 @@ TO BUILD .DEB PACKAGE
 2. run `dpkg-buildpackage -rfakeroot -b` to generate .deb package
     (To install the package, you could use `sudo dpkg -i ../adb_x.x.x-1.xxx.deb`)
 
+===
+OR DOWNLOAD the prebuilt package
+
+https://github.com/downloads/karfield/adb/adb_0.0.1-1_amd64.deb (based on git origin/master:27abd56edc)
+
+install the deb by graphic installer or command(`sudo dpkg -i xxx.deb`)
+
 Enjoy it!
