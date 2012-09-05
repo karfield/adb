@@ -1,2 +1,2 @@
-usr/bin
-etc/udev/rules.d
+/usr/bin/
+/etc/udev/rules.d/

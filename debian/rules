@@ -53,9 +53,9 @@ install: build
 	dh_clean -k
 	dh_installdirs
 
-	$(MAKE) install prefix=$(CURDIR)/debian/tmp/usr/bin/
-	cp etc/51-android.rules $(CURDIR)/debian/tmp/etc/udev/rules.d/
-	chmod a+r $(CURDIR)/debian/tmp/etc/udev/rules.d/51-android.rules
+	$(MAKE) install prefix=$(CURDIR)/debian/adb/usr/
+	cp etc/51-android.rules $(CURDIR)/debian/adb/etc/udev/rules.d/
+	chmod a+r $(CURDIR)/debian/adb/etc/udev/rules.d/51-android.rules
 
 # Build architecture-independent files here.
 binary-indep: build install
