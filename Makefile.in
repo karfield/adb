@@ -14,7 +14,6 @@
 # PARTICULAR PURPOSE.
 
 @SET_MAKE@
-
 VPATH = @srcdir@
 pkgdatadir = $(datadir)/@PACKAGE@
 pkgincludedir = $(includedir)/@PACKAGE@
@@ -34,7 +33,6 @@ PRE_UNINSTALL = :
 POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
-bin_PROGRAMS = adb$(EXEEXT)
 subdir = .
 DIST_COMMON = $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
@@ -50,37 +48,8 @@ mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = config.h
 CONFIG_CLEAN_FILES =
 CONFIG_CLEAN_VPATH_FILES =
-am__installdirs = "$(DESTDIR)$(bindir)"
-PROGRAMS = $(bin_PROGRAMS)
-am_adb_OBJECTS = adb-adb.$(OBJEXT) adb-console.$(OBJEXT) \
-	adb-transport.$(OBJEXT) adb-transport_local.$(OBJEXT) \
-	adb-transport_usb.$(OBJEXT) adb-commandline.$(OBJEXT) \
-	adb-adb_client.$(OBJEXT) adb-services.$(OBJEXT) \
-	adb-file_sync_client.$(OBJEXT) adb-usb_linux.$(OBJEXT) \
-	adb-get_my_path_linux.$(OBJEXT) adb-utils.$(OBJEXT) \
-	adb-usb_vendors.$(OBJEXT) adb-fdevent.$(OBJEXT) \
-	adb-sockets.$(OBJEXT)
-adb_OBJECTS = $(am_adb_OBJECTS)
-adb_DEPENDENCIES = $(top_srcdir)/libcutils/libcutils.a \
-	$(top_srcdir)/libzipfile/libzipfile.a
-adb_LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(adb_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
-DEFAULT_INCLUDES = -I.@am__isrc@
-depcomp = $(SHELL) $(top_srcdir)/depcomp
-am__depfiles_maybe = depfiles
-am__mv = mv -f
-COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
-	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) \
-	$(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
-	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
-	$(LDFLAGS) -o $@
-SOURCES = $(adb_SOURCES)
-DIST_SOURCES = $(adb_SOURCES)
+SOURCES =
+DIST_SOURCES =
 RECURSIVE_TARGETS = all-recursive check-recursive dvi-recursive \
 	html-recursive info-recursive install-data-recursive \
 	install-dvi-recursive install-exec-recursive \
@@ -165,7 +134,7 @@ INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LD = @LD@
 LDFLAGS = @LDFLAGS@
 LIBOBJS = @LIBOBJS@
-LIBS = -lrt -lncurses -lpthread -lz
+LIBS = @LIBS@
 LIBTOOL = @LIBTOOL@
 LIPO = @LIPO@
 LN_S = @LN_S@
@@ -245,34 +214,11 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = foreign
-SUBDIRS = libcutils libzipfile
-INCLUDES = -I./include/
-adb_SOURCES = \
-	adb.c \
-	console.c \
-	transport.c \
-	transport_local.c \
-	transport_usb.c \
-	commandline.c \
-	adb_client.c \
-	services.c \
-	file_sync_client.c \
-	usb_linux.c \
-	get_my_path_linux.c \
-	utils.c \
-	usb_vendors.c \
-	fdevent.c \
-	sockets.c
-
-adb_CFLAGS = -O2 -g -Wall -Wno-unused-parameter \
-		   -DADB_HOST=1 -D_XOPEN_SOURCE -D_GNU_SOURCE -DHAVE_FORKEXEC
-
-adb_LDADD = $(top_srcdir)/libcutils/libcutils.a $(top_srcdir)/libzipfile/libzipfile.a
+SUBDIRS = libcutils libzipfile src
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
 .SUFFIXES:
-.SUFFIXES: .c .lo .o .obj
 am--refresh:
 	@:
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
@@ -324,305 +270,6 @@ $(srcdir)/config.h.in:  $(am__configure_deps)
 
 distclean-hdr:
 	-rm -f config.h stamp-h1
-install-binPROGRAMS: $(bin_PROGRAMS)
-	@$(NORMAL_INSTALL)
-	test -z "$(bindir)" || $(MKDIR_P) "$(DESTDIR)$(bindir)"
-	@list='$(bin_PROGRAMS)'; test -n "$(bindir)" || list=; \
-	for p in $$list; do echo "$$p $$p"; done | \
-	sed 's/$(EXEEXT)$$//' | \
-	while read p p1; do if test -f $$p || test -f $$p1; \
-	  then echo "$$p"; echo "$$p"; else :; fi; \
-	done | \
-	sed -e 'p;s,.*/,,;n;h' -e 's|.*|.|' \
-	    -e 'p;x;s,.*/,,;s/$(EXEEXT)$$//;$(transform);s/$$/$(EXEEXT)/' | \
-	sed 'N;N;N;s,\n, ,g' | \
-	$(AWK) 'BEGIN { files["."] = ""; dirs["."] = 1 } \
-	  { d=$$3; if (dirs[d] != 1) { print "d", d; dirs[d] = 1 } \
-	    if ($$2 == $$4) files[d] = files[d] " " $$1; \
-	    else { print "f", $$3 "/" $$4, $$1; } } \
-	  END { for (d in files) print "f", d, files[d] }' | \
-	while read type dir files; do \
-	    if test "$$dir" = .; then dir=; else dir=/$$dir; fi; \
-	    test -z "$$files" || { \
-	    echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files '$(DESTDIR)$(bindir)$$dir'"; \
-	    $(INSTALL_PROGRAM_ENV) $(LIBTOOL) $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=install $(INSTALL_PROGRAM) $$files "$(DESTDIR)$(bindir)$$dir" || exit $$?; \
-	    } \
-	; done
-
-uninstall-binPROGRAMS:
-	@$(NORMAL_UNINSTALL)
-	@list='$(bin_PROGRAMS)'; test -n "$(bindir)" || list=; \
-	files=`for p in $$list; do echo "$$p"; done | \
-	  sed -e 'h;s,^.*/,,;s/$(EXEEXT)$$//;$(transform)' \
-	      -e 's/$$/$(EXEEXT)/' `; \
-	test -n "$$list" || exit 0; \
-	echo " ( cd '$(DESTDIR)$(bindir)' && rm -f" $$files ")"; \
-	cd "$(DESTDIR)$(bindir)" && rm -f $$files
-
-clean-binPROGRAMS:
-	@list='$(bin_PROGRAMS)'; test -n "$$list" || exit 0; \
-	echo " rm -f" $$list; \
-	rm -f $$list || exit $$?; \
-	test -n "$(EXEEXT)" || exit 0; \
-	list=`for p in $$list; do echo "$$p"; done | sed 's/$(EXEEXT)$$//'`; \
-	echo " rm -f" $$list; \
-	rm -f $$list
-adb$(EXEEXT): $(adb_OBJECTS) $(adb_DEPENDENCIES) 
-	@rm -f adb$(EXEEXT)
-	$(adb_LINK) $(adb_OBJECTS) $(adb_LDADD) $(LIBS)
-
-mostlyclean-compile:
-	-rm -f *.$(OBJEXT)
-
-distclean-compile:
-	-rm -f *.tab.c
-
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/adb-adb.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/adb-adb_client.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/adb-commandline.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/adb-console.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/adb-fdevent.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/adb-file_sync_client.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/adb-get_my_path_linux.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/adb-services.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/adb-sockets.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/adb-transport.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/adb-transport_local.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/adb-transport_usb.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/adb-usb_linux.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/adb-usb_vendors.Po@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/adb-utils.Po@am__quote@
-
-.c.o:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(COMPILE) -c $<
-
-.c.obj:
-@am__fastdepCC_TRUE@	$(COMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ `$(CYGPATH_W) '$<'`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
-
-.c.lo:
-@am__fastdepCC_TRUE@	$(LTCOMPILE) -MT $@ -MD -MP -MF $(DEPDIR)/$*.Tpo -c -o $@ $<
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/$*.Tpo $(DEPDIR)/$*.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
-
-adb-adb.o: adb.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -MT adb-adb.o -MD -MP -MF $(DEPDIR)/adb-adb.Tpo -c -o adb-adb.o `test -f 'adb.c' || echo '$(srcdir)/'`adb.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/adb-adb.Tpo $(DEPDIR)/adb-adb.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='adb.c' object='adb-adb.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -c -o adb-adb.o `test -f 'adb.c' || echo '$(srcdir)/'`adb.c
-
-adb-adb.obj: adb.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -MT adb-adb.obj -MD -MP -MF $(DEPDIR)/adb-adb.Tpo -c -o adb-adb.obj `if test -f 'adb.c'; then $(CYGPATH_W) 'adb.c'; else $(CYGPATH_W) '$(srcdir)/adb.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/adb-adb.Tpo $(DEPDIR)/adb-adb.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='adb.c' object='adb-adb.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -c -o adb-adb.obj `if test -f 'adb.c'; then $(CYGPATH_W) 'adb.c'; else $(CYGPATH_W) '$(srcdir)/adb.c'; fi`
-
-adb-console.o: console.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -MT adb-console.o -MD -MP -MF $(DEPDIR)/adb-console.Tpo -c -o adb-console.o `test -f 'console.c' || echo '$(srcdir)/'`console.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/adb-console.Tpo $(DEPDIR)/adb-console.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='console.c' object='adb-console.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -c -o adb-console.o `test -f 'console.c' || echo '$(srcdir)/'`console.c
-
-adb-console.obj: console.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -MT adb-console.obj -MD -MP -MF $(DEPDIR)/adb-console.Tpo -c -o adb-console.obj `if test -f 'console.c'; then $(CYGPATH_W) 'console.c'; else $(CYGPATH_W) '$(srcdir)/console.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/adb-console.Tpo $(DEPDIR)/adb-console.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='console.c' object='adb-console.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -c -o adb-console.obj `if test -f 'console.c'; then $(CYGPATH_W) 'console.c'; else $(CYGPATH_W) '$(srcdir)/console.c'; fi`
-
-adb-transport.o: transport.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -MT adb-transport.o -MD -MP -MF $(DEPDIR)/adb-transport.Tpo -c -o adb-transport.o `test -f 'transport.c' || echo '$(srcdir)/'`transport.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/adb-transport.Tpo $(DEPDIR)/adb-transport.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='transport.c' object='adb-transport.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -c -o adb-transport.o `test -f 'transport.c' || echo '$(srcdir)/'`transport.c
-
-adb-transport.obj: transport.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -MT adb-transport.obj -MD -MP -MF $(DEPDIR)/adb-transport.Tpo -c -o adb-transport.obj `if test -f 'transport.c'; then $(CYGPATH_W) 'transport.c'; else $(CYGPATH_W) '$(srcdir)/transport.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/adb-transport.Tpo $(DEPDIR)/adb-transport.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='transport.c' object='adb-transport.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -c -o adb-transport.obj `if test -f 'transport.c'; then $(CYGPATH_W) 'transport.c'; else $(CYGPATH_W) '$(srcdir)/transport.c'; fi`
-
-adb-transport_local.o: transport_local.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -MT adb-transport_local.o -MD -MP -MF $(DEPDIR)/adb-transport_local.Tpo -c -o adb-transport_local.o `test -f 'transport_local.c' || echo '$(srcdir)/'`transport_local.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/adb-transport_local.Tpo $(DEPDIR)/adb-transport_local.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='transport_local.c' object='adb-transport_local.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -c -o adb-transport_local.o `test -f 'transport_local.c' || echo '$(srcdir)/'`transport_local.c
-
-adb-transport_local.obj: transport_local.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -MT adb-transport_local.obj -MD -MP -MF $(DEPDIR)/adb-transport_local.Tpo -c -o adb-transport_local.obj `if test -f 'transport_local.c'; then $(CYGPATH_W) 'transport_local.c'; else $(CYGPATH_W) '$(srcdir)/transport_local.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/adb-transport_local.Tpo $(DEPDIR)/adb-transport_local.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='transport_local.c' object='adb-transport_local.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -c -o adb-transport_local.obj `if test -f 'transport_local.c'; then $(CYGPATH_W) 'transport_local.c'; else $(CYGPATH_W) '$(srcdir)/transport_local.c'; fi`
-
-adb-transport_usb.o: transport_usb.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -MT adb-transport_usb.o -MD -MP -MF $(DEPDIR)/adb-transport_usb.Tpo -c -o adb-transport_usb.o `test -f 'transport_usb.c' || echo '$(srcdir)/'`transport_usb.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/adb-transport_usb.Tpo $(DEPDIR)/adb-transport_usb.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='transport_usb.c' object='adb-transport_usb.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -c -o adb-transport_usb.o `test -f 'transport_usb.c' || echo '$(srcdir)/'`transport_usb.c
-
-adb-transport_usb.obj: transport_usb.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -MT adb-transport_usb.obj -MD -MP -MF $(DEPDIR)/adb-transport_usb.Tpo -c -o adb-transport_usb.obj `if test -f 'transport_usb.c'; then $(CYGPATH_W) 'transport_usb.c'; else $(CYGPATH_W) '$(srcdir)/transport_usb.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/adb-transport_usb.Tpo $(DEPDIR)/adb-transport_usb.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='transport_usb.c' object='adb-transport_usb.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -c -o adb-transport_usb.obj `if test -f 'transport_usb.c'; then $(CYGPATH_W) 'transport_usb.c'; else $(CYGPATH_W) '$(srcdir)/transport_usb.c'; fi`
-
-adb-commandline.o: commandline.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -MT adb-commandline.o -MD -MP -MF $(DEPDIR)/adb-commandline.Tpo -c -o adb-commandline.o `test -f 'commandline.c' || echo '$(srcdir)/'`commandline.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/adb-commandline.Tpo $(DEPDIR)/adb-commandline.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='commandline.c' object='adb-commandline.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -c -o adb-commandline.o `test -f 'commandline.c' || echo '$(srcdir)/'`commandline.c
-
-adb-commandline.obj: commandline.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -MT adb-commandline.obj -MD -MP -MF $(DEPDIR)/adb-commandline.Tpo -c -o adb-commandline.obj `if test -f 'commandline.c'; then $(CYGPATH_W) 'commandline.c'; else $(CYGPATH_W) '$(srcdir)/commandline.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/adb-commandline.Tpo $(DEPDIR)/adb-commandline.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='commandline.c' object='adb-commandline.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -c -o adb-commandline.obj `if test -f 'commandline.c'; then $(CYGPATH_W) 'commandline.c'; else $(CYGPATH_W) '$(srcdir)/commandline.c'; fi`
-
-adb-adb_client.o: adb_client.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -MT adb-adb_client.o -MD -MP -MF $(DEPDIR)/adb-adb_client.Tpo -c -o adb-adb_client.o `test -f 'adb_client.c' || echo '$(srcdir)/'`adb_client.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/adb-adb_client.Tpo $(DEPDIR)/adb-adb_client.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='adb_client.c' object='adb-adb_client.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -c -o adb-adb_client.o `test -f 'adb_client.c' || echo '$(srcdir)/'`adb_client.c
-
-adb-adb_client.obj: adb_client.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -MT adb-adb_client.obj -MD -MP -MF $(DEPDIR)/adb-adb_client.Tpo -c -o adb-adb_client.obj `if test -f 'adb_client.c'; then $(CYGPATH_W) 'adb_client.c'; else $(CYGPATH_W) '$(srcdir)/adb_client.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/adb-adb_client.Tpo $(DEPDIR)/adb-adb_client.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='adb_client.c' object='adb-adb_client.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -c -o adb-adb_client.obj `if test -f 'adb_client.c'; then $(CYGPATH_W) 'adb_client.c'; else $(CYGPATH_W) '$(srcdir)/adb_client.c'; fi`
-
-adb-services.o: services.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -MT adb-services.o -MD -MP -MF $(DEPDIR)/adb-services.Tpo -c -o adb-services.o `test -f 'services.c' || echo '$(srcdir)/'`services.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/adb-services.Tpo $(DEPDIR)/adb-services.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='services.c' object='adb-services.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -c -o adb-services.o `test -f 'services.c' || echo '$(srcdir)/'`services.c
-
-adb-services.obj: services.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -MT adb-services.obj -MD -MP -MF $(DEPDIR)/adb-services.Tpo -c -o adb-services.obj `if test -f 'services.c'; then $(CYGPATH_W) 'services.c'; else $(CYGPATH_W) '$(srcdir)/services.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/adb-services.Tpo $(DEPDIR)/adb-services.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='services.c' object='adb-services.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -c -o adb-services.obj `if test -f 'services.c'; then $(CYGPATH_W) 'services.c'; else $(CYGPATH_W) '$(srcdir)/services.c'; fi`
-
-adb-file_sync_client.o: file_sync_client.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -MT adb-file_sync_client.o -MD -MP -MF $(DEPDIR)/adb-file_sync_client.Tpo -c -o adb-file_sync_client.o `test -f 'file_sync_client.c' || echo '$(srcdir)/'`file_sync_client.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/adb-file_sync_client.Tpo $(DEPDIR)/adb-file_sync_client.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='file_sync_client.c' object='adb-file_sync_client.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -c -o adb-file_sync_client.o `test -f 'file_sync_client.c' || echo '$(srcdir)/'`file_sync_client.c
-
-adb-file_sync_client.obj: file_sync_client.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -MT adb-file_sync_client.obj -MD -MP -MF $(DEPDIR)/adb-file_sync_client.Tpo -c -o adb-file_sync_client.obj `if test -f 'file_sync_client.c'; then $(CYGPATH_W) 'file_sync_client.c'; else $(CYGPATH_W) '$(srcdir)/file_sync_client.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/adb-file_sync_client.Tpo $(DEPDIR)/adb-file_sync_client.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='file_sync_client.c' object='adb-file_sync_client.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -c -o adb-file_sync_client.obj `if test -f 'file_sync_client.c'; then $(CYGPATH_W) 'file_sync_client.c'; else $(CYGPATH_W) '$(srcdir)/file_sync_client.c'; fi`
-
-adb-usb_linux.o: usb_linux.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -MT adb-usb_linux.o -MD -MP -MF $(DEPDIR)/adb-usb_linux.Tpo -c -o adb-usb_linux.o `test -f 'usb_linux.c' || echo '$(srcdir)/'`usb_linux.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/adb-usb_linux.Tpo $(DEPDIR)/adb-usb_linux.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='usb_linux.c' object='adb-usb_linux.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -c -o adb-usb_linux.o `test -f 'usb_linux.c' || echo '$(srcdir)/'`usb_linux.c
-
-adb-usb_linux.obj: usb_linux.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -MT adb-usb_linux.obj -MD -MP -MF $(DEPDIR)/adb-usb_linux.Tpo -c -o adb-usb_linux.obj `if test -f 'usb_linux.c'; then $(CYGPATH_W) 'usb_linux.c'; else $(CYGPATH_W) '$(srcdir)/usb_linux.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/adb-usb_linux.Tpo $(DEPDIR)/adb-usb_linux.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='usb_linux.c' object='adb-usb_linux.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -c -o adb-usb_linux.obj `if test -f 'usb_linux.c'; then $(CYGPATH_W) 'usb_linux.c'; else $(CYGPATH_W) '$(srcdir)/usb_linux.c'; fi`
-
-adb-get_my_path_linux.o: get_my_path_linux.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -MT adb-get_my_path_linux.o -MD -MP -MF $(DEPDIR)/adb-get_my_path_linux.Tpo -c -o adb-get_my_path_linux.o `test -f 'get_my_path_linux.c' || echo '$(srcdir)/'`get_my_path_linux.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/adb-get_my_path_linux.Tpo $(DEPDIR)/adb-get_my_path_linux.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='get_my_path_linux.c' object='adb-get_my_path_linux.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -c -o adb-get_my_path_linux.o `test -f 'get_my_path_linux.c' || echo '$(srcdir)/'`get_my_path_linux.c
-
-adb-get_my_path_linux.obj: get_my_path_linux.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -MT adb-get_my_path_linux.obj -MD -MP -MF $(DEPDIR)/adb-get_my_path_linux.Tpo -c -o adb-get_my_path_linux.obj `if test -f 'get_my_path_linux.c'; then $(CYGPATH_W) 'get_my_path_linux.c'; else $(CYGPATH_W) '$(srcdir)/get_my_path_linux.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/adb-get_my_path_linux.Tpo $(DEPDIR)/adb-get_my_path_linux.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='get_my_path_linux.c' object='adb-get_my_path_linux.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -c -o adb-get_my_path_linux.obj `if test -f 'get_my_path_linux.c'; then $(CYGPATH_W) 'get_my_path_linux.c'; else $(CYGPATH_W) '$(srcdir)/get_my_path_linux.c'; fi`
-
-adb-utils.o: utils.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -MT adb-utils.o -MD -MP -MF $(DEPDIR)/adb-utils.Tpo -c -o adb-utils.o `test -f 'utils.c' || echo '$(srcdir)/'`utils.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/adb-utils.Tpo $(DEPDIR)/adb-utils.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='utils.c' object='adb-utils.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -c -o adb-utils.o `test -f 'utils.c' || echo '$(srcdir)/'`utils.c
-
-adb-utils.obj: utils.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -MT adb-utils.obj -MD -MP -MF $(DEPDIR)/adb-utils.Tpo -c -o adb-utils.obj `if test -f 'utils.c'; then $(CYGPATH_W) 'utils.c'; else $(CYGPATH_W) '$(srcdir)/utils.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/adb-utils.Tpo $(DEPDIR)/adb-utils.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='utils.c' object='adb-utils.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -c -o adb-utils.obj `if test -f 'utils.c'; then $(CYGPATH_W) 'utils.c'; else $(CYGPATH_W) '$(srcdir)/utils.c'; fi`
-
-adb-usb_vendors.o: usb_vendors.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -MT adb-usb_vendors.o -MD -MP -MF $(DEPDIR)/adb-usb_vendors.Tpo -c -o adb-usb_vendors.o `test -f 'usb_vendors.c' || echo '$(srcdir)/'`usb_vendors.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/adb-usb_vendors.Tpo $(DEPDIR)/adb-usb_vendors.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='usb_vendors.c' object='adb-usb_vendors.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -c -o adb-usb_vendors.o `test -f 'usb_vendors.c' || echo '$(srcdir)/'`usb_vendors.c
-
-adb-usb_vendors.obj: usb_vendors.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -MT adb-usb_vendors.obj -MD -MP -MF $(DEPDIR)/adb-usb_vendors.Tpo -c -o adb-usb_vendors.obj `if test -f 'usb_vendors.c'; then $(CYGPATH_W) 'usb_vendors.c'; else $(CYGPATH_W) '$(srcdir)/usb_vendors.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/adb-usb_vendors.Tpo $(DEPDIR)/adb-usb_vendors.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='usb_vendors.c' object='adb-usb_vendors.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -c -o adb-usb_vendors.obj `if test -f 'usb_vendors.c'; then $(CYGPATH_W) 'usb_vendors.c'; else $(CYGPATH_W) '$(srcdir)/usb_vendors.c'; fi`
-
-adb-fdevent.o: fdevent.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -MT adb-fdevent.o -MD -MP -MF $(DEPDIR)/adb-fdevent.Tpo -c -o adb-fdevent.o `test -f 'fdevent.c' || echo '$(srcdir)/'`fdevent.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/adb-fdevent.Tpo $(DEPDIR)/adb-fdevent.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='fdevent.c' object='adb-fdevent.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -c -o adb-fdevent.o `test -f 'fdevent.c' || echo '$(srcdir)/'`fdevent.c
-
-adb-fdevent.obj: fdevent.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -MT adb-fdevent.obj -MD -MP -MF $(DEPDIR)/adb-fdevent.Tpo -c -o adb-fdevent.obj `if test -f 'fdevent.c'; then $(CYGPATH_W) 'fdevent.c'; else $(CYGPATH_W) '$(srcdir)/fdevent.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/adb-fdevent.Tpo $(DEPDIR)/adb-fdevent.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='fdevent.c' object='adb-fdevent.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -c -o adb-fdevent.obj `if test -f 'fdevent.c'; then $(CYGPATH_W) 'fdevent.c'; else $(CYGPATH_W) '$(srcdir)/fdevent.c'; fi`
-
-adb-sockets.o: sockets.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -MT adb-sockets.o -MD -MP -MF $(DEPDIR)/adb-sockets.Tpo -c -o adb-sockets.o `test -f 'sockets.c' || echo '$(srcdir)/'`sockets.c
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/adb-sockets.Tpo $(DEPDIR)/adb-sockets.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='sockets.c' object='adb-sockets.o' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -c -o adb-sockets.o `test -f 'sockets.c' || echo '$(srcdir)/'`sockets.c
-
-adb-sockets.obj: sockets.c
-@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -MT adb-sockets.obj -MD -MP -MF $(DEPDIR)/adb-sockets.Tpo -c -o adb-sockets.obj `if test -f 'sockets.c'; then $(CYGPATH_W) 'sockets.c'; else $(CYGPATH_W) '$(srcdir)/sockets.c'; fi`
-@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/adb-sockets.Tpo $(DEPDIR)/adb-sockets.Po
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='sockets.c' object='adb-sockets.obj' libtool=no @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -c -o adb-sockets.obj `if test -f 'sockets.c'; then $(CYGPATH_W) 'sockets.c'; else $(CYGPATH_W) '$(srcdir)/sockets.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
@@ -945,12 +592,9 @@ distcleancheck: distclean
 	       exit 1; } >&2
 check-am: all-am
 check: check-recursive
-all-am: Makefile $(PROGRAMS) config.h
+all-am: Makefile config.h
 installdirs: installdirs-recursive
 installdirs-am:
-	for dir in "$(DESTDIR)$(bindir)"; do \
-	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
-	done
 install: install-recursive
 install-exec: install-exec-recursive
 install-data: install-data-recursive
@@ -978,14 +622,13 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-recursive
 
-clean-am: clean-binPROGRAMS clean-generic clean-libtool mostlyclean-am
+clean-am: clean-generic clean-libtool mostlyclean-am
 
 distclean: distclean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
-	-rm -rf ./$(DEPDIR)
 	-rm -f Makefile
-distclean-am: clean-am distclean-compile distclean-generic \
-	distclean-hdr distclean-libtool distclean-tags
+distclean-am: clean-am distclean-generic distclean-hdr \
+	distclean-libtool distclean-tags
 
 dvi: dvi-recursive
 
@@ -1005,7 +648,7 @@ install-dvi: install-dvi-recursive
 
 install-dvi-am:
 
-install-exec-am: install-binPROGRAMS
+install-exec-am:
 
 install-html: install-html-recursive
 
@@ -1030,14 +673,12 @@ installcheck-am:
 maintainer-clean: maintainer-clean-recursive
 	-rm -f $(am__CONFIG_DISTCLEAN_FILES)
 	-rm -rf $(top_srcdir)/autom4te.cache
-	-rm -rf ./$(DEPDIR)
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
 mostlyclean: mostlyclean-recursive
 
-mostlyclean-am: mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool
+mostlyclean-am: mostlyclean-generic mostlyclean-libtool
 
 pdf: pdf-recursive
 
@@ -1047,28 +688,26 @@ ps: ps-recursive
 
 ps-am:
 
-uninstall-am: uninstall-binPROGRAMS
+uninstall-am:
 
 .MAKE: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) all \
 	ctags-recursive install-am install-strip tags-recursive
 
 .PHONY: $(RECURSIVE_CLEAN_TARGETS) $(RECURSIVE_TARGETS) CTAGS GTAGS \
-	all all-am am--refresh check check-am clean clean-binPROGRAMS \
-	clean-generic clean-libtool ctags ctags-recursive dist \
-	dist-all dist-bzip2 dist-gzip dist-lzma dist-shar dist-tarZ \
-	dist-xz dist-zip distcheck distclean distclean-compile \
-	distclean-generic distclean-hdr distclean-libtool \
-	distclean-tags distcleancheck distdir distuninstallcheck dvi \
-	dvi-am html html-am info info-am install install-am \
-	install-binPROGRAMS install-data install-data-am install-dvi \
+	all all-am am--refresh check check-am clean clean-generic \
+	clean-libtool ctags ctags-recursive dist dist-all dist-bzip2 \
+	dist-gzip dist-lzma dist-shar dist-tarZ dist-xz dist-zip \
+	distcheck distclean distclean-generic distclean-hdr \
+	distclean-libtool distclean-tags distcleancheck distdir \
+	distuninstallcheck dvi dvi-am html html-am info info-am \
+	install install-am install-data install-data-am install-dvi \
 	install-dvi-am install-exec install-exec-am install-html \
 	install-html-am install-info install-info-am install-man \
 	install-pdf install-pdf-am install-ps install-ps-am \
 	install-strip installcheck installcheck-am installdirs \
 	installdirs-am maintainer-clean maintainer-clean-generic \
-	mostlyclean mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool pdf pdf-am ps ps-am tags tags-recursive \
-	uninstall uninstall-am uninstall-binPROGRAMS
+	mostlyclean mostlyclean-generic mostlyclean-libtool pdf pdf-am \
+	ps ps-am tags tags-recursive uninstall uninstall-am
 
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.

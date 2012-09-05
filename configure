@@ -706,7 +706,7 @@ PACKAGE_STRING='adb 0.0.1'
 PACKAGE_BUGREPORT='karfield@126.com'
 PACKAGE_URL=''
 
-ac_unique_file="adb.h"
+ac_unique_file="src/adb.h"
 # Factoring default headers for most tests.
 ac_includes_default="\
 #include <stdio.h>
@@ -10689,7 +10689,53 @@ CC="$lt_save_CC"
 
 
 
+
 # Checks for libraries.
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for sched_setscheduler in -lrt" >&5
+$as_echo_n "checking for sched_setscheduler in -lrt... " >&6; }
+if test "${ac_cv_lib_rt_sched_setscheduler+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lrt  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char sched_setscheduler ();
+int
+main ()
+{
+return sched_setscheduler ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_rt_sched_setscheduler=yes
+else
+  ac_cv_lib_rt_sched_setscheduler=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_rt_sched_setscheduler" >&5
+$as_echo "$ac_cv_lib_rt_sched_setscheduler" >&6; }
+if test "x$ac_cv_lib_rt_sched_setscheduler" = x""yes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBRT 1
+_ACEOF
+
+  LIBS="-lrt $LIBS"
+
+fi
+
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for pthread_create in -lpthread" >&5
 $as_echo_n "checking for pthread_create in -lpthread... " >&6; }
 if test "${ac_cv_lib_pthread_pthread_create+set}" = set; then :
@@ -10732,6 +10778,96 @@ if test "x$ac_cv_lib_pthread_pthread_create" = x""yes; then :
 _ACEOF
 
   LIBS="-lpthread $LIBS"
+
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for delscreen in -lncurses" >&5
+$as_echo_n "checking for delscreen in -lncurses... " >&6; }
+if test "${ac_cv_lib_ncurses_delscreen+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lncurses  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char delscreen ();
+int
+main ()
+{
+return delscreen ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_ncurses_delscreen=yes
+else
+  ac_cv_lib_ncurses_delscreen=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_ncurses_delscreen" >&5
+$as_echo "$ac_cv_lib_ncurses_delscreen" >&6; }
+if test "x$ac_cv_lib_ncurses_delscreen" = x""yes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBNCURSES 1
+_ACEOF
+
+  LIBS="-lncurses $LIBS"
+
+fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for inflateInit2_ in -lz" >&5
+$as_echo_n "checking for inflateInit2_ in -lz... " >&6; }
+if test "${ac_cv_lib_z_inflateInit2_+set}" = set; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-lz  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char inflateInit2_ ();
+int
+main ()
+{
+return inflateInit2_ ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_z_inflateInit2_=yes
+else
+  ac_cv_lib_z_inflateInit2_=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_z_inflateInit2_" >&5
+$as_echo "$ac_cv_lib_z_inflateInit2_" >&6; }
+if test "x$ac_cv_lib_z_inflateInit2_" = x""yes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBZ 1
+_ACEOF
+
+  LIBS="-lz $LIBS"
 
 fi
 
@@ -11628,7 +11764,7 @@ fi
 done
 
 
-ac_config_files="$ac_config_files Makefile libcutils/Makefile libzipfile/Makefile"
+ac_config_files="$ac_config_files Makefile src/Makefile libcutils/Makefile libzipfile/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -12606,6 +12742,7 @@ do
     "depfiles") CONFIG_COMMANDS="$CONFIG_COMMANDS depfiles" ;;
     "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
+    "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
     "libcutils/Makefile") CONFIG_FILES="$CONFIG_FILES libcutils/Makefile" ;;
     "libzipfile/Makefile") CONFIG_FILES="$CONFIG_FILES libzipfile/Makefile" ;;
 
