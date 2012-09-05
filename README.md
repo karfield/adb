@@ -30,5 +30,6 @@ TO BUILD .DEB PACKAGE
 1. Check dpkg tools (dpkg-dev, dh-make, debhelper, fakeroot, etc.)
 
 2. run `dpkg-buildpackage -rfakeroot -b` to generate .deb package
+    (To install the package, you could use `sudo dpkg -i ../adb_x.x.x-1.xxx.deb`)
 
 Enjoy it!
