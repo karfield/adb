@@ -1,0 +1,8 @@
+adb (0.0.1-1) unstable; urgency=low
+
+  [ Karfield Chen ]
+  * Initial release.
+  * Merge adb source with libcutils, add standalone Makefile.
+  * Add udev rules for android devices (listed on android.com)
+
+ -- Karfield Chen <karfield@126.com>  Wed, 05 Sep 2012 10:44:42 +0800

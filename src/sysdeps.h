@@ -20,7 +20,7 @@
 #ifndef _ADB_SYSDEPS_H
 #define _ADB_SYSDEPS_H
 
-#include "config.h"
+#include "../config.h"
 
 #ifdef __CYGWIN__
 #  undef _WIN32

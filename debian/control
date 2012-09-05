@@ -1,0 +1,15 @@
+Source: adb
+Section: devel
+Priority: optional
+Maintainer: Karfield Chen <karfield@126.com>
+Uploaders: Karfield Chen <karfield@126.com>
+Build-Depends: debhelper (>> 6), autotools-dev, zlib1g-dev
+Standards-Version: 3.6.2
+Homepage: https://github.com/karfield/adb
+Vcs-git: git://github.com/karfield/adb.git
+Vcs-Browser: https://github.com/karfield/adb
+
+Package: adb
+Architecture: any
+Depends:
+Description: adb is a tool for debugging android devices.
