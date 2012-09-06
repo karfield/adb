@@ -54,8 +54,8 @@ install: build
 	dh_installdirs
 
 	$(MAKE) install prefix=$(CURDIR)/debian/adb/usr/
-	cp etc/51-android.rules $(CURDIR)/debian/adb/etc/udev/rules.d/
-	chmod a+r $(CURDIR)/debian/adb/etc/udev/rules.d/51-android.rules
+	@$(CURDIR)/debian/gen_udev_rules.sh -c $(CURDIR)/src/usb_vendor_ids.c \
+		-o $(CURDIR)/debian/adb/etc/udev/rules.d/51-android.rules
 
 # Build architecture-independent files here.
 binary-indep: build install
