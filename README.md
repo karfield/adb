@@ -36,7 +36,7 @@ TO BUILD .DEB PACKAGE
 ===
 OR DOWNLOAD the prebuilt package
 
-https://github.com/downloads/karfield/adb/adb_0.0.1-1_amd64.deb (based on git origin/master:27abd56edc)
+https://github.com/downloads/karfield/adb/adb_0.0.1-2_amd64.deb
 
 install the deb by graphic installer or command(`sudo dpkg -i xxx.deb`)
 
