@@ -11764,7 +11764,7 @@ fi
 done
 
 
-ac_config_files="$ac_config_files Makefile src/Makefile libcutils/Makefile libzipfile/Makefile"
+ac_config_files="$ac_config_files Makefile src/Makefile fastboot/Makefile libcutils/Makefile libzipfile/Makefile"
 
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
@@ -12743,6 +12743,7 @@ do
     "libtool") CONFIG_COMMANDS="$CONFIG_COMMANDS libtool" ;;
     "Makefile") CONFIG_FILES="$CONFIG_FILES Makefile" ;;
     "src/Makefile") CONFIG_FILES="$CONFIG_FILES src/Makefile" ;;
+    "fastboot/Makefile") CONFIG_FILES="$CONFIG_FILES fastboot/Makefile" ;;
     "libcutils/Makefile") CONFIG_FILES="$CONFIG_FILES libcutils/Makefile" ;;
     "libzipfile/Makefile") CONFIG_FILES="$CONFIG_FILES libzipfile/Makefile" ;;
 

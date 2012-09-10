@@ -42,4 +42,4 @@ AC_FUNC_MALLOC
 AC_FUNC_REALLOC
 AC_CHECK_FUNCS(atexit dup2 getcwd gethostbyname gettimeofday localtime_r memset mkdir select socket strchr strdup strerror strpbrk strrchr strtol strtoul tzset utime)
 
-AC_OUTPUT(Makefile src/Makefile libcutils/Makefile libzipfile/Makefile)
+AC_OUTPUT(Makefile src/Makefile fastboot/Makefile libcutils/Makefile libzipfile/Makefile)
