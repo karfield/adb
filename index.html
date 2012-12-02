@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+
+    <link rel="stylesheet" type="text/css" href="stylesheets/stylesheet.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/pygment_trac.css" media="screen" />
+    <link rel="stylesheet" type="text/css" href="stylesheets/print.css" media="print" />
+
+    <title>Adb (standalone) by karfield</title>
+  </head>
+
+  <body>
+
+    <header>
+      <div class="container">
+        <h1>Adb (standalone)</h1>
+        <h2>adb standalone</h2>
+
+        <section id="downloads">
+          <a href="https://github.com/karfield/adb/zipball/master" class="btn">Download as .zip</a>
+          <a href="https://github.com/karfield/adb/tarball/master" class="btn">Download as .tar.gz</a>
+          <a href="https://github.com/karfield/adb" class="btn btn-github"><span class="icon"></span>View on GitHub</a>
+        </section>
+      </div>
+    </header>
+
+    <div class="container">
+      <section id="main_content">
+        <h1></h1>
+
+<p>adb is a useful tool for debugging android devices, you can download the
+binary from google/android.com(mostly), but it only supports small amount
+devices. To support some specific android device, you need to add the VID,
+add udev rule, etc.
+If you want to support your devices natively of adb, you should change the
+usb_vendors.c code, then build the whole android source to get the adb tool.
+It cause too much to gain the benefit.</p>
+
+<p>This project is to build the adb source standalone out of the Android build
+script system. I merged the main adb source with some essential libraries
+(libcutils and libzipfile), and add Makefile for it.</p>
+
+<ul>
+<li>This project has supported fastboot (from 0.1.0).</li>
+</ul><h1></h1>
+
+<p>INSTRUCTIONS:</p>
+
+<ol>
+<li><p>After get the source, you can change the usb_vendor_ids.c to add your VID.
+use debian/gen_udev_rules.sh to generate udev rule for those VID.</p></li>
+<li><p>make
+build the adb and fastboot</p></li>
+<li><p>make install
+install the adb and fastboot into /usr/bin/ configure the udev</p></li>
+<li><p>copy 51-android.rules to /etc/udev/rules.d/</p></li>
+</ol><h1></h1>
+
+<p>TO BUILD .DEB PACKAGE</p>
+
+<ol>
+<li><p>Check dpkg tools (dpkg-dev, dh-make, debhelper, fakeroot, etc.)</p></li>
+<li><p>run <code>dpkg-buildpackage -rfakeroot -b</code> to generate .deb package
+(To install the package, you could use <code>sudo dpkg -i ../adb_x.x.x-1.xxx.deb</code>)</p></li>
+</ol><h1></h1>
+
+<p>OR DOWNLOAD the prebuilt package</p>
+
+<p><a href="https://github.com/downloads/karfield/adb/adb_0.1.0-1_amd64.deb">https://github.com/downloads/karfield/adb/adb_0.1.0-1_amd64.deb</a></p>
+
+<p>install the deb by graphic installer or command(<code>sudo dpkg -i xxx.deb</code>)</p>
+
+<h1>For Mac</h1>
+
+<p>Howto compile?
+git clone this repo. run
+ ./autogen.sh
+ make install</p>
+
+<p>to support homebrew use</p>
+
+<ol>
+<li>brew create <a href="https://github.com/downloads/karfield/adb/adb-mac-1.0.1.tgz">https://github.com/downloads/karfield/adb/adb-mac-1.0.1.tgz</a>
+</li>
+</ol><p>Give a name: Adb4Mac</p>
+
+<ol>
+<li>brew edit Adb4Mac</li>
+</ol><p>Modify like this:
+    require 'formula'</p>
+
+<pre><code>class Adb4Mac &lt; Formula
+    homepage 'https://git.hub/karfield/adb/'
+    url 'https://github.com/downloads/karfield/adb/adb-1.0.1.tgz'
+    md5 '308a5476fc096a8a525d07279a6f6aa3' ## dont mod this line, it's auto-gen
+
+    def install
+       system "./autogen.sh"
+       system "./configure", "--prefix=#{prefix}"
+       system 'make install'
+    end
+end
+</code></pre>
+
+<ol>
+<li>brew install Adb4Mac</li>
+</ol><p>if you don't compile this on your mac, just download the excutable bin files,
+   copy them (adb and fastboot) into wherever you wannt.
+   OR run install-adb-for-mac.sh(download <a href="https://github.com/downloads/karfield/adb/install-adb-for-mac.tar.gz">https://github.com/downloads/karfield/adb/install-adb-for-mac.tar.gz</a>)</p>
+
+<p>Enjoy it!</p>
+      </section>
+    </div>
+
+    
+  </body>
+</html>
