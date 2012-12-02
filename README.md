@@ -52,8 +52,11 @@ git clone this repo. run
 
 to support homebrew use
  1. brew create https://github.com/downloads/karfield/adb/adb-mac-1.0.1.tgz
+
 Give a name: Adb4Mac
+
  2. brew edit Adb4Mac
+
 ###Modify like this:
 require 'formula'
 
@@ -69,6 +72,7 @@ class Adb4Mac < Formula
   end
 end
 ###
+
  3. brew install Adb4Mac
 
 if you don't compile this on your mac, just download the excutable bin files,
