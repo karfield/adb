@@ -54,7 +54,7 @@ to support homebrew use
  1. brew create https://github.com/downloads/karfield/adb/adb-mac-1.0.1.tgz
 Give a name: Adb4Mac
  2. brew edit Adb4Mac
-Modify like this:
+###Modify like this:
 require 'formula'
 
 class Adb4Mac < Formula
@@ -68,9 +68,11 @@ class Adb4Mac < Formula
 	 system 'make install'
   end
 end
+###
  3. brew install Adb4Mac
 
 if you don't compile this on your mac, just download the excutable bin files,
-   copy them (adb and fastboot) into wherever you wannt. OR run install-adb.sh
+   copy them (adb and fastboot) into wherever you wannt.
+   OR run install-adb-for-mac.sh(download https://github.com/downloads/karfield/adb/install-adb-for-mac.tar.gz)
 
 Enjoy it!
