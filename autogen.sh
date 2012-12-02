@@ -1,4 +1,4 @@
-# !/bin/bash
+# !/bin/sh -e
 
 if [ `(uname -s) 2>/dev/null` == 'Darwin' ]
 then
@@ -10,7 +10,4 @@ fi
 automake --add-missing
 
 autoreconf
-./configure
-
-make
 
