@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ(2.67)
-AC_INIT(adb, 0.0.1, karfield@126.com)
+AC_INIT(adb, 1.0.1, karfield@126.com)
 AC_CONFIG_SRCDIR(src/adb.h)
 AC_CONFIG_HEADERS(config.h)
 AM_INIT_AUTOMAKE(test, 1.0)
@@ -41,5 +41,9 @@ AC_FUNC_LSTAT_FOLLOWS_SLASHED_SYMLINK
 AC_FUNC_MALLOC
 AC_FUNC_REALLOC
 AC_CHECK_FUNCS(atexit dup2 getcwd gethostbyname gettimeofday localtime_r memset mkdir select socket strchr strdup strerror strpbrk strrchr strtol strtoul tzset utime)
+
+hosttype=`uname -s`
+AM_CONDITIONAL(HOST_IS_LINUX, test x"$hosttype" = xLinux)
+AM_CONDITIONAL(HOST_IS_DARWIN, test x"$hosttype" = xDarwin)
 
 AC_OUTPUT(Makefile src/Makefile fastboot/Makefile libcutils/Makefile libzipfile/Makefile)
