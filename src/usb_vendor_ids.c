@@ -52,5 +52,6 @@ int builtInVendorIds[] = {
     0x0fce, /* SonyEricsson */
     0x2340, /* Teleepoch */
     0x19d2, /* ZTE */
+	0x210e, /* Haier */
     /* TODO: APPEND YOUR ID HERE! */
 };
