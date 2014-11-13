@@ -55,7 +55,10 @@ bin_PROGRAMS = fastboot$(EXEEXT)
 subdir = fastboot
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/configure.in
+am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
+	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
+	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
+	$(top_srcdir)/configure.in
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
@@ -65,7 +68,10 @@ CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am__fastboot_SOURCES_DIST = protocol.c engine.c bootimg.c fastboot.c \
-	usb_osx.c util_osx.c usb_linux.c util_linux.c
+	usb_osx.c util_osx.c usb_linux.c util_linux.c usb_windows.c \
+	$(top_srcdir)/src/get_my_path_windows.c
+@HOST_IS_DARWIN_FALSE@@HOST_IS_LINUX_FALSE@@HOST_IS_WINDOWS_TRUE@am__objects_1 = fastboot-usb_windows.$(OBJEXT) \
+@HOST_IS_DARWIN_FALSE@@HOST_IS_LINUX_FALSE@@HOST_IS_WINDOWS_TRUE@	fastboot-get_my_path_windows.$(OBJEXT)
 @HOST_IS_DARWIN_FALSE@@HOST_IS_LINUX_TRUE@am__objects_1 = fastboot-usb_linux.$(OBJEXT) \
 @HOST_IS_DARWIN_FALSE@@HOST_IS_LINUX_TRUE@	fastboot-util_linux.$(OBJEXT)
 @HOST_IS_DARWIN_TRUE@am__objects_1 = fastboot-usb_osx.$(OBJEXT) \
@@ -140,6 +146,7 @@ LIBTOOL = @LIBTOOL@
 LIPO = @LIPO@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
+MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
 MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
@@ -216,11 +223,13 @@ top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 AUTOMAKE_OPTIONS = foreign
-INCLUDES = -I$(top_srcdir)/include
+INCLUDES = -I$(top_srcdir)/include -I$(top_srcdir)/src
 @HOST_IS_DARWIN_TRUE@source_deps = usb_osx.c util_osx.c
 @HOST_IS_LINUX_TRUE@source_deps = usb_linux.c util_linux.c
+@HOST_IS_WINDOWS_TRUE@source_deps = usb_windows.c $(top_srcdir)/src/get_my_path_windows.c
 @HOST_IS_DARWIN_TRUE@libs_deps = -framework CoreFoundation -framework IOKit -framework Carbon
 @HOST_IS_LINUX_TRUE@libs_deps = -lncurses
+@HOST_IS_WINDOWS_TRUE@libs_deps = -L$(top_srcdir) -lAdbWinApi -lAdbWinUsbApi
 fastboot_SOURCES = protocol.c engine.c bootimg.c fastboot.c $(source_deps)
 fastboot_CFLAGS = -O2 -g -Wall -Wno-unused-parameter
 fastboot_LDADD = $(top_srcdir)/libzipfile/libzipfile.a
@@ -228,7 +237,7 @@ all: all-am
 
 .SUFFIXES:
 .SUFFIXES: .c .lo .o .obj
-$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -253,9 +262,9 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 
-$(top_srcdir)/configure:  $(am__configure_deps)
+$(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
-$(ACLOCAL_M4):  $(am__aclocal_m4_deps)
+$(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
 install-binPROGRAMS: $(bin_PROGRAMS)
@@ -317,9 +326,11 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fastboot-bootimg.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fastboot-engine.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fastboot-fastboot.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fastboot-get_my_path_windows.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fastboot-protocol.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fastboot-usb_linux.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fastboot-usb_osx.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fastboot-usb_windows.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fastboot-util_linux.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/fastboot-util_osx.Po@am__quote@
 
@@ -455,6 +466,34 @@ fastboot-util_linux.obj: util_linux.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='util_linux.c' object='fastboot-util_linux.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(fastboot_CFLAGS) $(CFLAGS) -c -o fastboot-util_linux.obj `if test -f 'util_linux.c'; then $(CYGPATH_W) 'util_linux.c'; else $(CYGPATH_W) '$(srcdir)/util_linux.c'; fi`
+
+fastboot-usb_windows.o: usb_windows.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(fastboot_CFLAGS) $(CFLAGS) -MT fastboot-usb_windows.o -MD -MP -MF $(DEPDIR)/fastboot-usb_windows.Tpo -c -o fastboot-usb_windows.o `test -f 'usb_windows.c' || echo '$(srcdir)/'`usb_windows.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/fastboot-usb_windows.Tpo $(DEPDIR)/fastboot-usb_windows.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='usb_windows.c' object='fastboot-usb_windows.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(fastboot_CFLAGS) $(CFLAGS) -c -o fastboot-usb_windows.o `test -f 'usb_windows.c' || echo '$(srcdir)/'`usb_windows.c
+
+fastboot-usb_windows.obj: usb_windows.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(fastboot_CFLAGS) $(CFLAGS) -MT fastboot-usb_windows.obj -MD -MP -MF $(DEPDIR)/fastboot-usb_windows.Tpo -c -o fastboot-usb_windows.obj `if test -f 'usb_windows.c'; then $(CYGPATH_W) 'usb_windows.c'; else $(CYGPATH_W) '$(srcdir)/usb_windows.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/fastboot-usb_windows.Tpo $(DEPDIR)/fastboot-usb_windows.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='usb_windows.c' object='fastboot-usb_windows.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(fastboot_CFLAGS) $(CFLAGS) -c -o fastboot-usb_windows.obj `if test -f 'usb_windows.c'; then $(CYGPATH_W) 'usb_windows.c'; else $(CYGPATH_W) '$(srcdir)/usb_windows.c'; fi`
+
+fastboot-get_my_path_windows.o: $(top_srcdir)/src/get_my_path_windows.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(fastboot_CFLAGS) $(CFLAGS) -MT fastboot-get_my_path_windows.o -MD -MP -MF $(DEPDIR)/fastboot-get_my_path_windows.Tpo -c -o fastboot-get_my_path_windows.o `test -f '$(top_srcdir)/src/get_my_path_windows.c' || echo '$(srcdir)/'`$(top_srcdir)/src/get_my_path_windows.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/fastboot-get_my_path_windows.Tpo $(DEPDIR)/fastboot-get_my_path_windows.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(top_srcdir)/src/get_my_path_windows.c' object='fastboot-get_my_path_windows.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(fastboot_CFLAGS) $(CFLAGS) -c -o fastboot-get_my_path_windows.o `test -f '$(top_srcdir)/src/get_my_path_windows.c' || echo '$(srcdir)/'`$(top_srcdir)/src/get_my_path_windows.c
+
+fastboot-get_my_path_windows.obj: $(top_srcdir)/src/get_my_path_windows.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(fastboot_CFLAGS) $(CFLAGS) -MT fastboot-get_my_path_windows.obj -MD -MP -MF $(DEPDIR)/fastboot-get_my_path_windows.Tpo -c -o fastboot-get_my_path_windows.obj `if test -f '$(top_srcdir)/src/get_my_path_windows.c'; then $(CYGPATH_W) '$(top_srcdir)/src/get_my_path_windows.c'; else $(CYGPATH_W) '$(srcdir)/$(top_srcdir)/src/get_my_path_windows.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/fastboot-get_my_path_windows.Tpo $(DEPDIR)/fastboot-get_my_path_windows.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$(top_srcdir)/src/get_my_path_windows.c' object='fastboot-get_my_path_windows.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(fastboot_CFLAGS) $(CFLAGS) -c -o fastboot-get_my_path_windows.obj `if test -f '$(top_srcdir)/src/get_my_path_windows.c'; then $(CYGPATH_W) '$(top_srcdir)/src/get_my_path_windows.c'; else $(CYGPATH_W) '$(srcdir)/$(top_srcdir)/src/get_my_path_windows.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo
