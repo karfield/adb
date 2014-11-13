@@ -13,14 +13,20 @@ if HOST_IS_DARWIN
     libs_deps = -framework CoreFoundation -framework IOKit -framework Carbon
 endif
 
+if HOST_IS_WINDOWS
+source_deps = adb_api.h usb_windows.c get_my_path_windows.c
+libs_deps = -L$(top_srcdir) -lAdbWinApi -lAdbWinUsbApi
+endif
+
 adb_SOURCES = adb.c console.c transport.c transport_local.c transport_usb.c \
     commandline.c adb_client.c services.c file_sync_client.c utils.c \
-    usb_vendors.c fdevent.c sockets.c $(source_deps)
+    usb_vendors.c fdevent.c sockets.c $(source_deps) 
+
 
 adb_CFLAGS = -O2 -g -Wall -Wno-unused-parameter \
            -DADB_HOST=1 -D_XOPEN_SOURCE -D_GNU_SOURCE -DHAVE_FORKEXEC
 
 LIBS = -lpthread -lz $(libs_deps)
 
-adb_LDADD = $(top_srcdir)/libcutils/libcutils.a $(top_srcdir)/libzipfile/libzipfile.a
+adb_LDADD = $(top_srcdir)/libcutils/libcutils.a $(top_srcdir)/libzipfile/libzipfile.a 
 
