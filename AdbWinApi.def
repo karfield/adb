@@ -1,0 +1,26 @@
+EXPORTS
+	AdbCloseHandle @ 55 ;
+	AdbCreateInterface @ 56 ;
+	AdbCreateInterfaceByName @ 57 ;
+	AdbEnumInterfaces @ 58 ;
+	AdbGetDefaultBulkReadEndpointInformation @ 59 ;
+	AdbGetDefaultBulkWriteEndpointInformation @ 60 ;
+	AdbGetEndpointInformation @ 61 ;
+	AdbGetEndpointInterface @ 62 ;
+	AdbGetInterfaceName @ 63 ;
+	AdbGetOvelappedIoResult @ 64 ;
+	AdbGetSerialNumber @ 65 ;
+	AdbGetUsbConfigurationDescriptor @ 66 ;
+	AdbGetUsbDeviceDescriptor @ 67 ;
+	AdbGetUsbInterfaceDescriptor @ 68 ;
+	AdbHasOvelappedIoComplated @ 69 ;
+	AdbNextInterface @ 70 ;
+	AdbOpenDefaultBulkReadEndpoint @ 71 ;
+	AdbOpenDefaultBulkWriteEndpoint @ 72 ;
+	AdbOpenEndpoint @ 73 ;
+	AdbQueryInformationEndpoint @ 74 ;
+	AdbReadEndpointAsync @ 75 ;
+	AdbReadEndpointSync @ 76 ;
+	AdbResetInterfaceEnum @ 77 ;
+	AdbWriteEndpointAsync @ 78 ;
+	AdbWriteEndpointSync @ 79 ;

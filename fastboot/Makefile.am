@@ -1,5 +1,5 @@
 AUTOMAKE_OPTIONS = foreign
-INCLUDES = -I$(top_srcdir)/include
+INCLUDES = -I$(top_srcdir)/include -I$(top_srcdir)/src
 bin_PROGRAMS = fastboot
 
 if HOST_IS_LINUX
@@ -12,8 +12,15 @@ if HOST_IS_DARWIN
    libs_deps = -framework CoreFoundation -framework IOKit -framework Carbon
 endif
 
+if HOST_IS_WINDOWS
+source_deps = usb_windows.c $(top_srcdir)/src/get_my_path_windows.c
+libs_deps = -L$(top_srcdir) -lAdbWinApi -lAdbWinUsbApi
+endif
+
 fastboot_SOURCES = protocol.c engine.c bootimg.c fastboot.c $(source_deps)
+
 LIBS = -lpthread -lz $(libs_deps)
+
 fastboot_CFLAGS = -O2 -g -Wall -Wno-unused-parameter
 fastboot_LDADD = $(top_srcdir)/libzipfile/libzipfile.a
 

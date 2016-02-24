@@ -55,7 +55,10 @@ bin_PROGRAMS = adb$(EXEEXT)
 subdir = src
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
-am__aclocal_m4_deps = $(top_srcdir)/configure.in
+am__aclocal_m4_deps = $(top_srcdir)/m4/libtool.m4 \
+	$(top_srcdir)/m4/ltoptions.m4 $(top_srcdir)/m4/ltsugar.m4 \
+	$(top_srcdir)/m4/ltversion.m4 $(top_srcdir)/m4/lt~obsolete.m4 \
+	$(top_srcdir)/configure.in
 am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(install_sh) -d
@@ -67,7 +70,10 @@ PROGRAMS = $(bin_PROGRAMS)
 am__adb_SOURCES_DIST = adb.c console.c transport.c transport_local.c \
 	transport_usb.c commandline.c adb_client.c services.c \
 	file_sync_client.c utils.c usb_vendors.c fdevent.c sockets.c \
-	usb_osx.c get_my_path_darwin.c usb_linux.c get_my_path_linux.c
+	usb_osx.c get_my_path_darwin.c usb_linux.c get_my_path_linux.c \
+	adb_api.h usb_windows.c get_my_path_windows.c
+@HOST_IS_DARWIN_FALSE@@HOST_IS_LINUX_FALSE@@HOST_IS_WINDOWS_TRUE@am__objects_1 = adb-usb_windows.$(OBJEXT) \
+@HOST_IS_DARWIN_FALSE@@HOST_IS_LINUX_FALSE@@HOST_IS_WINDOWS_TRUE@	adb-get_my_path_windows.$(OBJEXT)
 @HOST_IS_DARWIN_FALSE@@HOST_IS_LINUX_TRUE@am__objects_1 = adb-usb_linux.$(OBJEXT) \
 @HOST_IS_DARWIN_FALSE@@HOST_IS_LINUX_TRUE@	adb-get_my_path_linux.$(OBJEXT)
 @HOST_IS_DARWIN_TRUE@am__objects_1 = adb-usb_osx.$(OBJEXT) \
@@ -147,6 +153,7 @@ LIBTOOL = @LIBTOOL@
 LIPO = @LIPO@
 LN_S = @LN_S@
 LTLIBOBJS = @LTLIBOBJS@
+MAINT = @MAINT@
 MAKEINFO = @MAKEINFO@
 MANIFEST_TOOL = @MANIFEST_TOOL@
 MKDIR_P = @MKDIR_P@
@@ -226,21 +233,23 @@ AUTOMAKE_OPTIONS = foreign
 INCLUDES = -I$(top_srcdir)/include
 @HOST_IS_DARWIN_TRUE@source_deps = usb_osx.c get_my_path_darwin.c
 @HOST_IS_LINUX_TRUE@source_deps = usb_linux.c get_my_path_linux.c
+@HOST_IS_WINDOWS_TRUE@source_deps = adb_api.h usb_windows.c get_my_path_windows.c
 @HOST_IS_DARWIN_TRUE@libs_deps = -framework CoreFoundation -framework IOKit -framework Carbon
 @HOST_IS_LINUX_TRUE@libs_deps = -lrt -lncurses
+@HOST_IS_WINDOWS_TRUE@libs_deps = -L$(top_srcdir) -lAdbWinApi -lAdbWinUsbApi
 adb_SOURCES = adb.c console.c transport.c transport_local.c transport_usb.c \
     commandline.c adb_client.c services.c file_sync_client.c utils.c \
-    usb_vendors.c fdevent.c sockets.c $(source_deps)
+    usb_vendors.c fdevent.c sockets.c $(source_deps) 
 
 adb_CFLAGS = -O2 -g -Wall -Wno-unused-parameter \
            -DADB_HOST=1 -D_XOPEN_SOURCE -D_GNU_SOURCE -DHAVE_FORKEXEC
 
-adb_LDADD = $(top_srcdir)/libcutils/libcutils.a $(top_srcdir)/libzipfile/libzipfile.a
+adb_LDADD = $(top_srcdir)/libcutils/libcutils.a $(top_srcdir)/libzipfile/libzipfile.a 
 all: all-am
 
 .SUFFIXES:
 .SUFFIXES: .c .lo .o .obj
-$(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
+$(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
 	    *$$dep*) \
@@ -265,9 +274,9 @@ Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 $(top_builddir)/config.status: $(top_srcdir)/configure $(CONFIG_STATUS_DEPENDENCIES)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 
-$(top_srcdir)/configure:  $(am__configure_deps)
+$(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
-$(ACLOCAL_M4):  $(am__aclocal_m4_deps)
+$(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(am__aclocal_m4_deps):
 install-binPROGRAMS: $(bin_PROGRAMS)
@@ -334,6 +343,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/adb-file_sync_client.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/adb-get_my_path_darwin.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/adb-get_my_path_linux.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/adb-get_my_path_windows.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/adb-services.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/adb-sockets.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/adb-transport.Po@am__quote@
@@ -342,6 +352,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/adb-usb_linux.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/adb-usb_osx.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/adb-usb_vendors.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/adb-usb_windows.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/adb-utils.Po@am__quote@
 
 .c.o:
@@ -602,6 +613,34 @@ adb-get_my_path_linux.obj: get_my_path_linux.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='get_my_path_linux.c' object='adb-get_my_path_linux.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -c -o adb-get_my_path_linux.obj `if test -f 'get_my_path_linux.c'; then $(CYGPATH_W) 'get_my_path_linux.c'; else $(CYGPATH_W) '$(srcdir)/get_my_path_linux.c'; fi`
+
+adb-usb_windows.o: usb_windows.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -MT adb-usb_windows.o -MD -MP -MF $(DEPDIR)/adb-usb_windows.Tpo -c -o adb-usb_windows.o `test -f 'usb_windows.c' || echo '$(srcdir)/'`usb_windows.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/adb-usb_windows.Tpo $(DEPDIR)/adb-usb_windows.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='usb_windows.c' object='adb-usb_windows.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -c -o adb-usb_windows.o `test -f 'usb_windows.c' || echo '$(srcdir)/'`usb_windows.c
+
+adb-usb_windows.obj: usb_windows.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -MT adb-usb_windows.obj -MD -MP -MF $(DEPDIR)/adb-usb_windows.Tpo -c -o adb-usb_windows.obj `if test -f 'usb_windows.c'; then $(CYGPATH_W) 'usb_windows.c'; else $(CYGPATH_W) '$(srcdir)/usb_windows.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/adb-usb_windows.Tpo $(DEPDIR)/adb-usb_windows.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='usb_windows.c' object='adb-usb_windows.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -c -o adb-usb_windows.obj `if test -f 'usb_windows.c'; then $(CYGPATH_W) 'usb_windows.c'; else $(CYGPATH_W) '$(srcdir)/usb_windows.c'; fi`
+
+adb-get_my_path_windows.o: get_my_path_windows.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -MT adb-get_my_path_windows.o -MD -MP -MF $(DEPDIR)/adb-get_my_path_windows.Tpo -c -o adb-get_my_path_windows.o `test -f 'get_my_path_windows.c' || echo '$(srcdir)/'`get_my_path_windows.c
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/adb-get_my_path_windows.Tpo $(DEPDIR)/adb-get_my_path_windows.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='get_my_path_windows.c' object='adb-get_my_path_windows.o' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -c -o adb-get_my_path_windows.o `test -f 'get_my_path_windows.c' || echo '$(srcdir)/'`get_my_path_windows.c
+
+adb-get_my_path_windows.obj: get_my_path_windows.c
+@am__fastdepCC_TRUE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -MT adb-get_my_path_windows.obj -MD -MP -MF $(DEPDIR)/adb-get_my_path_windows.Tpo -c -o adb-get_my_path_windows.obj `if test -f 'get_my_path_windows.c'; then $(CYGPATH_W) 'get_my_path_windows.c'; else $(CYGPATH_W) '$(srcdir)/get_my_path_windows.c'; fi`
+@am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/adb-get_my_path_windows.Tpo $(DEPDIR)/adb-get_my_path_windows.Po
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='get_my_path_windows.c' object='adb-get_my_path_windows.obj' libtool=no @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(adb_CFLAGS) $(CFLAGS) -c -o adb-get_my_path_windows.obj `if test -f 'get_my_path_windows.c'; then $(CYGPATH_W) 'get_my_path_windows.c'; else $(CYGPATH_W) '$(srcdir)/get_my_path_windows.c'; fi`
 
 mostlyclean-libtool:
 	-rm -f *.lo

@@ -6,8 +6,8 @@ then
 else
 	libtoolize --copy
 fi
-
-automake --add-missing
-
+aclocal -I m4
+automake --foreign --add-missing
+aclocal -I m4
 autoreconf
 
